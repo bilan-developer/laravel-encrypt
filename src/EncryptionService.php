@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Pmedynskyi\LaravelEncrypt;
+
+class EncryptionService
+{
+    private const DEFAULT_KEY = 'root';
+    private const ENCRYPTION_METHOD = 'AES-256-CBC';
+    private const DEFAULT_OFFSET = 0;
+    private const DEFAULT_LENGTH = 16;
+    private const ALGO = 'sha256';
+
+    /**
+     * @param string $string
+     * @param bool $encrypt
+     * @param string $secretKey
+     * @param string $iv
+     *
+     * @return mixed
+     */
+    public static function hash(string $string, bool $encrypt = true, string $secretKey = self::DEFAULT_KEY, string $iv = self::DEFAULT_KEY): mixed
+    {
+        return $encrypt ? self::encrypt($string, $secretKey, $iv) : self::decrypt($string, $secretKey, $iv);
+    }
+
+    /**
+     * @param string $string
+     * @param string $secretKey
+     * @param string $iv
+     *
+     * @return mixed
+     */
+    public static function decrypt(string $string, string $secretKey = self::DEFAULT_KEY, string $iv = self::DEFAULT_KEY): mixed
+    {
+        $secretKey = hash(self::ALGO, $secretKey);
+        $iv = substr(hash(self::ALGO, md5($iv)), self::DEFAULT_OFFSET, self::DEFAULT_LENGTH);
+
+        return openssl_decrypt(base64_decode($string), self::ENCRYPTION_METHOD, $secretKey, 0, $iv);
+    }
+
+    /**
+     * @param string $string
+     * @param string $secretKey
+     * @param string $iv
+     *
+     * @return mixed
+     */
+    public static function encrypt(string $string, string $secretKey = self::DEFAULT_KEY, string $iv = self::DEFAULT_KEY): mixed
+    {
+        $secretKey = hash(self::ALGO, $secretKey);
+        $iv = substr(hash(self::ALGO, md5($iv)), self::DEFAULT_OFFSET, self::DEFAULT_LENGTH);
+        $output = openssl_encrypt($string, self::ENCRYPTION_METHOD, $secretKey, 0, $iv);
+
+        return base64_encode($output);
+    }
+}

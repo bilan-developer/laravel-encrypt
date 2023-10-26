@@ -1,0 +1,19 @@
+{
+  "name": "bilan/laravel-encrypt",
+  "autoload": {
+    "psr-4": {
+      "Pmedynskyi\\LaravelEncrypt\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Bilan Oleksandr",
+      "email": "bilan.developer@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "ext-openssl": "*"
+  },
+  "minimum-stability": "stable"
+}
